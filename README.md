@@ -1,5 +1,5 @@
 # NOUNSING-PRO
-## A Deep-Phonological Toolkit for Poetics, Linguistics, and Prosodic Analysis
+### Phonological Toolkit for Poetics, Linguistics, & Prosodic Analysis
 
 **CRUCIAL SETUP INFO**: <br>
 1. Clone this repo. <br>
