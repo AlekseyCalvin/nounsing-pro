@@ -2,12 +2,14 @@
 ## A Deep-Phonological Toolkit for Poetics, Linguistics, and Prosodic Analysis
 
 **CRUCIAL SETUP INFO**: <br>
-*TO USE:* 1. Clone this repo. 2. Download the TSV of our augmented CMU Dictionary (*33.2MB*, just over GutHub's *25MB* size limit) from [https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv](https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv). 4. Place it into the cloned root folder. <br>
-5.Build via:
+1. Clone this repo. <br>
+  2. Download the TSV of our augmented CMU Dictionary (*33.2MB*, just over GutHub's *25MB* size limit) from [https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv](https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv) <br>
+  3. Place it into the cloned root folder. <br>
+  4. Build via:
 ```
 npm build
 ```
-6. Start CLI using:
+  5. Start CLI using:
 ```
 npm start
 ```
