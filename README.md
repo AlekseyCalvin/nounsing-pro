@@ -1,13 +1,13 @@
 # NOUNSING-PRO
-
 ## A Deep-Phonological Toolkit for Poetics, Linguistics, and Prosodic Analysis
 
-**CRUCIAL INFORMATION** To use, download our augmented CMU Dictionary in the TSV format from [https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv](https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv) and place it into the root folder. <br>
-Then build via:
+**CRUCIAL SETUP INFO**: <br>
+*TO USE:* 1. Clone this repo. 2. Download the TSV of our augmented CMU Dictionary (*33.2MB*, just over GutHub's *25MB* size limit) from [https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv](https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv). 4. Place it into the cloned root folder. <br>
+5.Build via:
 ```
 npm build
 ```
-Then start CLI using:
+6. Start CLI using:
 ```
 npm start
 ```
