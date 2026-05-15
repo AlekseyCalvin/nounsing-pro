@@ -1,0 +1,69 @@
+{
+  "name": "nounsing-pro",
+  "version": "0.0.5",
+  "description": "augmented TypeScript spawn of Pronouncing Py, over a deep morpho-phonological CMU, Penn tags, and more",
+  "author": [
+    {
+      "name": "Aleksey Calvin Tsukanov",
+      "email": "alekseycalvin@gmail.com",
+      "url": "https://SilverAgePoets.com"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Allison Parrish",
+      "email": "allison@decontextualize.com",
+      "url": "https://www.decontextualize.com"
+    },
+    {
+      "name": "Claire Moore Cantwell",
+      "email": "moore.cantwell@ucla.edu",
+      "url": "https://clairemoorecantwell.org"
+    }
+  ],
+  "main": "./dist/cjs/nounsing.js",
+  "module": "./dist/esm/nounsing.mjs",
+  "types": "./dist/cjs/nounsing.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/cjs/nounsing.d.ts",
+      "import": "./dist/esm/nounsing.mjs",
+      "require": "./dist/cjs/nounsing.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "nounsing.d.ts"
+  ],
+  "scripts": {
+    "start": "node dist/cjs/cli.js",
+    "build": "npm run build:cjs && npm run build:esm && npm run build:browser && npm run copy:dts",
+    "build:cjs": "tsc && node -e \"require('fs').copyFileSync('newerCMU.tsv', 'dist/cjs/newerCMU.tsv')\"",
+    "build:esm": "node -e \"require('fs').mkdirSync('dist/esm',{recursive:true}); require('fs').writeFileSync('dist/esm/nounsing.mjs', 'export * from \\\"../cjs/nounsing.js\\\";\\n');\"",
+    "build:browser": "browserify -t brfs dist/cjs/nounsing.js --standalone nounsing > dist/nounsing-browser.js",
+    "build:test": "tsc -p tsconfig.test.json && node -e \"require('fs').copyFileSync('newerCMU.tsv', 'dist-test/src/newerCMU.tsv')\"",
+    "copy:dts": "node -e \"require('fs').copyFileSync('dist/cjs/nounsing.d.ts', 'nounsing.d.ts')\"",
+    "test": "npm run build:test && node dist-test/test/nounsing.test.js && node dist-test/test/manual.test.js",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/prompts": "^2.4.9",
+    "@types/tape": "^5.6.0",
+    "brfs": "^2.0.0",
+    "browserify": "^17.0.0",
+    "tape": "^5.7.0",
+    "typescript": "^5.4.0"
+  },
+  "license": "MIT",
+  "browserify": {
+    "transform": [
+      "brfs"
+    ]
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "prompts": "^2.4.2"
+  }
+}

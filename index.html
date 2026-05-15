@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Nounsing Test</title></head>
+<body>
+<h1>Nounsing Browser Test</h1>
+<p>Open DevTools Console (Cmd+Opt+J) to run commands.</p>
+
+<script src="dist/nounsing-browser.js"></script>
+<script>
+  const n = window.nounsing;
+  console.log('nounsing loaded. Try:');
+  console.log('  n.phonesForWord("hello")');
+  console.log('  n.syllableCount("HH EH1 L OW0")');
+  console.log('  n.rhymes("cat")');
+  console.log('  n.scansion("abacus")');
+  console.log('  n.vowelQualities("abacus")');
+  console.log('  n.countTextSyllables("hello world")');
+  console.log('  n.mostCommonPhones("hello world hello")');
+  console.log('  n.poeticFit("abacus", "dactyl")');
+  console.log('  Object.keys(n).sort()  // all available functions');
+</script>
+</body>
+</html>
