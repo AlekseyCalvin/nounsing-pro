@@ -2,10 +2,18 @@
 
 ## A Deep-Phonological Toolkit for Poetics, Linguistics, and Prosodic Analysis
 
+**CRUCIAL INFORMATION** To use, download our augmented CMU Dictionary in the TSV format from [https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv](https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv) and place it into the root folder. <br>
+Then build via:
+```
+npm build
+```
+Then start CLI using:
+```
+npm start
+```
+---
 NOUNSING-PRO is a comprehensive TypeScript toolkit for lexical-phonological-morphological-prosodic inquiry, built over an augmented variation of the CMU Pronouncing Dictionary (52+ data columns per word). It offers both a programmable API and an interactive terminal CLI with ANSI-color-coded diagnostics covering syllable weight, stress contours, metrical parsing, rhyme profiling, morphological classification, onset/coda geometry, vowel quality analysis, Part-of-Speech filtering, Zipf-frequency thresholding, and much more. 
 This toolkit, designed & devised by **[Aleksey Calvin Tsukanov](https://huggingface.co/AlekseyCalvin)** on the behalf of **[SilverAgePoets.com](https://silveragepoets.com/)**, builds on the works of **[Allison Parrish](https://www.decontextualize.com/)**, **[Claire Moore Cantwell](https://clairemoorecantwell.org/)**, **[Bruce Hayes] (https://brucehayes.org/)**, and others (more detailed credits at the bottom).
-
----
 
 ## Table of Contents
 
