@@ -1,5 +1,5 @@
 # NOUNSING-PRO
-### Morpho-Phonological Toolkit for Poetics, Linguistics, & Prosodic Analysis
+#### Morpho-Phonological Toolkit for Poetics, Linguistics, & Prosodic Analysis
 
 **CRUCIAL SETUP INFO**: <br>
 1. Clone this repo. <br>
