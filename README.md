@@ -14,8 +14,11 @@ npm build
 npm start
 ```
 ---
-**NOUNSING-PRO** is a comprehensive TypeScript toolkit intended as a versatile resource for a broad range of logocentered usage contexts. It may be for used for lexical-phonological-morphological-prosodic analysis, poetry scansion, creative writing, experimental transformation of input texts, and more. It was built over a custom augmented variation of the **CMU Pronouncing Dictionary** (52+ data columns per word) and may be utilized via a programmable API or/and an interactive terminal CLI with ANSI-color-coded diagnostics covering syllable weight, stress contours, metrical parsing, rhyme profiling, morphological classification, onset/coda geometry, vowel quality analysis, Penn Treebank-derived Part-of-Speech tags, Zipf word frequencies (averaged from across SUBTLEX and large web corpuses), and much more. 
-This toolkit, designed & devised by **[Aleksey Calvin Tsukanov](https://huggingface.co/AlekseyCalvin)** on the behalf of **[SilverAgePoets.com](https://silveragepoets.com/)**, builds on the works of **[Allison Parrish](https://www.decontextualize.com/)**, **[Claire Moore Cantwell](https://clairemoorecantwell.org/)**, **[Bruce Hayes] (https://brucehayes.org/)**, and others (more detailed credits at the bottom).
+**NOUNSING-PRO** is a comprehensive TypeScript toolkit intended as a versatile resource for a broad range of logocentered usage contexts. It may be for used for lexical-phonological-morphological-prosodic analysis, poetry scansion, creative writing, experimental transformation of input texts, and more. It was built over a custom augmented variation of the **CMU Pronouncing Dictionary** (52+ data columns per word) and may be utilized via a programmable API or/and an interactive terminal CLI with ANSI-color-coded diagnostics covering syllable weight, stress contours, metrical parsing, rhyme profiling, morphological classification, onset/coda geometry, vowel quality analysis, Penn Treebank-derived Part-of-Speech tags, Zipf word frequencies (averaged from across SUBTLEX and large web corpuses), and much more.
+
+This toolkit, designed & devised by **[Aleksey Calvin Tsukanov](https://huggingface.co/AlekseyCalvin)** on the behalf of **[SilverAgePoets.com](https://silveragepoets.com/)**, builds on the works of **[Allison Parrish](https://www.decontextualize.com/)**, UCLA's **[Claire Moore Cantwell](https://clairemoorecantwell.org/)**, **[Bruce Hayes](https://brucehayes.org/)**, and  **[Austin Pursley](https://austinpursley.com/)** (more detailed credits at the bottom).
+
+---
 
 ## Table of Contents
 
@@ -34,7 +37,7 @@ This toolkit, designed & devised by **[Aleksey Calvin Tsukanov](https://huggingf
      - [F. Onset Structure Analysis](#f-onset-structure-analysis)
      - [G. Granular Rime Weights](#g-granular-rime-weights)
    - [Submenu 2: Search Dictionary](#submenu-2-search-dictionary)
-     - [A. Rhyme Search](#a-rhyme-search)
+     - [A. Basic Rhyme Search](#a-basic-rhyme-search)
      - [B. Pattern Search](#b-pattern-search)
      - [C. Meter Search](#c-meter-search)
      - [D. RegEx Search](#d-regex-search)
@@ -45,17 +48,22 @@ This toolkit, designed & devised by **[Aleksey Calvin Tsukanov](https://huggingf
      - [C. Stress Pattern Rewrite](#c-stress-pattern-rewrite)
      - [D. Rhyme Rewrite](#d-rhyme-rewrite)
      - [PoS Precision & Zipf Threshold](#pos-precision--zipf-threshold)
+   - [Submenu 4: Nuanced Rhyming](#submenu-4-nuanced-rhyming)
+   - [Submenu 5: Advanced Rhyming](#submenu-5-advanced-rhyming)
 3. [API Reference](#api-reference)
-   - [Core Pronouncing-Compatible Functions](#core-pronouncing-compatible-functions)
+   - [Core Pronouncing-Derived Functions](#core-pronouncing-derived-functions)
    - [Domain-Segmented Data Accessors](#domain-segmented-data-accessors)
    - [Complex NLP & Poetics Functions](#complex-nlp--poetics-functions)
    - [Text-Processing Functions](#text-processing-functions)
+   - [Deep Rhyme & Metrical Generation](#deep-rhyme--metrical-generation)
+   - [Supported Rhyme Types](#supported-rhyme-types)
    - [Type Exports](#type-exports)
 4. [Tutorial: API Examples](#tutorial-api-examples)
    - [Word Pronunciation & Syllable Counting](#word-pronunciation--syllable-counting)
    - [Calculating Most Common Sounds](#calculating-most-common-sounds)
    - [Pronunciation & Meter Search](#pronunciation--meter-search)
    - [Rhyme Search & Rhyme-Based Rewriting](#rhyme-search--rhyme-based-rewriting)
+   - [Deep & Nuanced Rhyme Search](#deep--nuanced-rhyme-search)
    - [Stress Pattern Rewrite](#stress-pattern-rewrite)
    - [Phoneme-Based Rewrite](#phoneme-based-rewrite)
    - [Scanning with Poetic Fit & Metrical Insets](#scanning-with-poetic-fit--metrical-insets)
@@ -255,9 +263,9 @@ Also displays heaviness (L/H) and the H/L pattern for the last 3 syllables, plus
 
 ### Submenu 2: Search Dictionary
 
-#### A. Rhyme Search
+#### A. Basic Rhyme Search
 
-Enter a target word. The tool extracts its rhyming part (from the last stressed vowel onward) and searches the dictionary for all words ending with that same phonetic sequence. For results > 23, a flexible slice prompt appears supporting:
+(**NOTE:** *This rhyme-matching pipeline only supports perfect rhymes. Use the nuanced/advanced rhyme matching functions (detailed below) to search for slant, eye, rich, trailing, consonant, and many other varieties of rhymes and homophonies.*) Enter a target word. The tool extracts its rhyming part (from the last stressed vowel onward) and searches the dictionary for all words ending with that same phonetic sequence. For results > 23, a flexible slice prompt appears supporting:
 - `all` — show everything
 - `300` — first 300
 - `300-600` — range from result 300 to 600
@@ -322,11 +330,32 @@ For operations B, C, and D, two optional filters are offered:
 
 These combine flexibly: you can use PoS filtering with or without a Zipf threshold, and vice versa.
 
+#### Submenu 4: Nuanced Rhyming
+
+Allows for deep, targeted exploration of the database using **21 distinct rhyming categories** compiled in `src/verse_tscript_rhymer.ts`. Candidates are generated directly from the entire lexicon without arbitrary limits on candidate lists.
+
+- **Grid Matrix Selector**: An interactive 4x5 arrow-key-selectable terminal grid containing the full range of supported rhyme types. Easily navigate using arrow keys (`Up`/`Down`/`Left`/`Right`), select with `Enter`, or exit to the main menu with `Esc` or `q`.
+- **Pure Rhyming Scope**: All advanced filters (Part-of-Speech, Zipf, stress, meter, etc.) are disabled. It focuses purely on retrieving matches that acoustically satisfy the selected rhyming category's rules.
+- **Slicing Control**: If the count of matching rhymes exceeds 23, the tool prompts you to select a slice range (e.g. `all`, `300`, `300-600`, or a prefix search filter like `s 100`) to paginate through results.
+
+#### Submenu 5: Advanced Rhyming
+
+The ultimate rhyming tool combining deep acoustic rhyming with complex structural and metrical queries.
+
+- **Dynamic Rhyme Type Selector**: Renders the same convenient 4x5 console matrix selector to let you choose the precise rhyming category.
+- **Linguistic, Lexical & Poetic Constraints**: After choosing the target word and the rhyming category, the CLI prompts for:
+  - **Part-of-Speech (PoS) Precision** (0–3): Standard Penn Treebank tag filtering (Exact, Broad, or Category match).
+  - **Lexicon Normativity (Zipf) Threshold** (0–4.00, default 2.00): Restrict results to a frequency floor.
+  - **Exact Syllable Count**: Filters rhymes strictly to a specified length.
+  - **Holistic Poetic Foot Fit (Meter)**: Select from 16 traditional foot structures (e.g. `iamb`, `trochee`, `dactyl`) to guarantee candidates match the metric across their entire word contour.
+  - **Exact Stress Contour Pattern**: Restrict candidates to a precise stress contour pattern (e.g. `10` or `010`).
+- **Interactive Slicing & Export**: Paginate or filter the final metrically aligned results using the slice range commands.
+
 ---
 
 ## API Reference
 
-### Core Pronouncing-Compatible Functions
+### Core Pronouncing-Derived Functions
 
 These functions are adapted from Allison Parrish's Pronouncing library and maintain backward-compatible behavior.
 
@@ -338,12 +367,12 @@ These functions are adapted from Allison Parrish's Pronouncing library and maint
 | `rhymingPart(phones)` | `(phones: string)` | `string` | Extracts the rhyme portion from the last stressed vowel onward |
 | `search(pattern)` | `(pattern: string \| RegExp)` | `string[]` | Finds words whose phones match a regex pattern |
 | `searchStresses(pattern)` | `(pattern: string)` | `string[]` | Finds words whose stress digit-string matches a regex pattern |
-| `rhymes(word)` | `(word: string)` | `string[]` | Returns all words that rhyme with the given word |
+| `rhymes(word)` | `(word: string)` | `string[]` | Returns all words that perfectly rhyme with the given word, per the phonemes which constitute its rhyming part  |
 | `stresses(s)` | `(s: string)` | `string` | Extracts stress digits (0/1/2) from a phone string |
 
 ### Domain-Segmented Data Accessors
 
-These functions return structured data from the augmented CMU columns.
+These functions return structured data from the augmented CMU columns detailing and/or mapping fine-grained morphological or/and phonological features for each word.
 
 | Function | Returns | Covers |
 |---|---|---|
@@ -384,9 +413,66 @@ These functions return structured data from the augmented CMU columns.
 
 All three rewrite functions accept optional `posPrecision` (0–3) and `freqThreshold` (0–4.00) parameters for filtering candidates by Part-of-Speech and Zipf frequency.
 
+### Deep Rhyme & Metrical Generation
+
+These functions are located in the `src/verse_tscript_rhymer.ts` module and provide programmatic access to our nuanced/advanced rhyming engine:
+
+| Function | Signature | Returns | Description |
+|---|---|---|---|
+| `getRhymes(word, type, options?)` | `(word: string, type: RhymeType, options?: GetRhymesOptions \| string)` | `string[]` | Returns all matching rhyme candidates of a given type. Supports advanced metrical/POS filtering options. |
+| `classifyRhyme(wordA, wordB, options?)` | `(wordA: string, wordB: string, options?: { includeMosaic?: boolean })` | `RhymeType[]` | Identifies and returns all rhyme relations holding between two words. |
+| `randomRhyme(word, options?)` | `(word: string, options?: GetRhymesOptions)` | `{ word: string; type: RhymeType } \| null` | Shuffles all candidates across multiple categories and selects a single random rhyme. |
+| `isMasculine(word, phones?)` | `(word: string, phones?: string)` | `boolean` | Checks if a word is structurally masculine (primary stress on the final syllable). |
+| `isFeminine(word, phones?)` | `(word: string, phones?: string)` | `boolean` | Checks if a word is structurally feminine (primary stress on the penultimate syllable). |
+| `isDactylic(word, phones?)` | `(word: string, phones?: string)` | `boolean` | Checks if a word is structurally dactylic (primary stress on the antepenultimate syllable). |
+
+### Supported Rhyme Types
+
+The toolkit features a rich taxonomy of **20+ programmatic rhyme types** implemented within `src/verse_tscript_rhymer.ts`. These represent a synthesis of tactical phoneme-matching, other specialized searches, and algorithmic/heuristic implementations of various organic poetic principles and patterns:
+
+| Rhyme Type | Synthesized Phonetic Rules & Description | Exemplar Pairs |
+|---|---|---|
+| `perfect` | **True Perfect Rhyme**: Exactly matched last-stressed syllable phonemes (not always or necessarily grapheme); the number of unstressed syllables preceding the last stressed syllable is immaterial for whether or not words rhyme. | *beat/street/incomplete/eat/elite/receipt*, *June/moon* |
+| `family` | **Consonant Family Rhyme**: When the stressed vowels match exactly, while the final consonant sounds belong to the same phonetic family. Per CMU acoustic formulations, the consonant sounds must both be plosives ((voiced:) *B, D, G*, (unvoiced:) *P, T, K*), or both fricatives ((voiced:) *V, TH, Z, ZH, JH*, (unvoiced:) *F, TH, S, SH, CH*), or both nasals (*M, N, NG*). | *wet/deck*, *dame/grain*, *float/yoke*, *math/pass* |
+| `slant` | **Near / Slant Rhyme**: Close but imperfect rhyme, typically matching the final consonants (coda frame) while vowels vary slightly; also called near-rhyme. | *prayer/despair*, *air/cigar* |
+| `masculine` | **Single / Masculine Rhyme**: Also known as a single rhyme, wherein the rhyming primary stress falls entirely on the final syllable of the end-word/foot. | *out/doubt*, *sing/ring* |
+| `feminine` | **Double / Feminine Rhyme**: Also known as a double rhyme, with the rhyming primary stress falling on the penultimate (second-to-last) syllable of the end-word or sequence (can sometimes be simultaneously compound: composed of multiple matching syllables, even across word boundaries). | *picky/tricky*, *yellow/fellow* |
+| `dactylic` | **Triple / Dactylic Rhyme**: Rhyme with its stress on the antepenultimate (third-to-last) syllable of the end-word or sequence (can sometimes be simultaneously compound: composed of multiple matching syllables, even across word boundaries). | *mortality/finality*, *amorous/glamorous* |
+| `eye` | **Visual / Eye Rhyme**: Visual similarity of spelling or graphemes without a corresponding sonic, acoustic, or phonetic match. | *prove/love*, *laughter/slaughter* |
+| `rich` | **Homophonic / Rich Rhyme**: Rhyme between homophones or near-homophones (identical phonetic sound strings) with utterly distinct spelling and meanings; the direct opposite of an eye rhyme. | *belief/leaf*, *right/write*, *night/knight* |
+| `assonant` | **Vowel-Only / Assonant Rhyme**: Only the vowel sounds match (in stressed and optionally unstressed syllables), while surrounding consonant graphemes and/or phone frames may be completely different. | *eyes/paradise*, *fade/lake* |
+| `consonant` | **Para-Rhyme / Consonant Rhyme**: Also known as a para-rhyme, where only the consonant frame/graphemes match, but the vowel sounds/phones and/or graphemes are different. | *heal/hell*, *bell/bull*, *rider/rudder* |
+| `augmented` | **Extended / Augmented Rhyme**: A sort of extension of slant rhyme. A rhyme in which the rhyming word (the latter word of a rhyming pair) carries an additional terminal consonant sound. | *bray/brave*, *grow/sown*, *play/plate* |
+| `diminished` | **Subtractive / Diminished Rhyme**: Reversal of the augmented rhyme. A slant near-rhyme variant in which the rhymed-with word (the preceding word within a rhyming pair) carries an additional terminal consonant sound compared to the candidate. | *brave/day*, *blown/sow*, *stained/rain* |
+| `syllabic` | **Syllabic Rhyme**: A rhyme in which the last syllable of each word sounds phonetically identical but does not necessarily contain stressed vowels. | *cleaver/silver*, *bottle/fiddle* |
+| `light` | **Unbalanced / Light Rhyme**: Rhymes a primary or normatively stressed syllable with a secondarily stressed or unstressed syllable of another word, disrupting conventional metrical stress patterning. | *nets/carpéts*, *he/poverty*, *stem/stratagem* |
+| `wrenched` | **Morphological / Wrenched Suffix Rhyme**: Rhyme based and grounded solely in matched morphological suffixes, without any corresponding or preceding stressed vowel homophonies; yet, the parallelism of suffixed morphologies may often harness sufficient anchoring to offset acoustic dissonance. | *manifestation/attraction/convention* |
+| `grammatical` | **Grammatical Rhyme**: Rhyme between words sharing a matching stressed vowel sound at their roots, but carrying distinct inflectional suffixes or endings, often enforced by the rules and constraints of grammatical well-formedness in English. | *pun/running/funny* |
+| `broken` | **Enjambment-Split / Broken Rhyme**: A conceptual rhyme finder intended to spot instances where a word is physically split across line breaks (enjambment) to rhyme one fragment with the end-word/syllables of another line, cutting words apart so the first part rhymes with some other line. Intended to be leveraged within fully-featured scansion engines equipped with syntactically/grammatically informed modules and, thereby, capable of reliably parsing and resolving features, dependencies, and constraints across multiline or stanzaic inputs. In and of itself, Nounsing-Pro is scarcely equipped for such usages but is designed to support them in combination with other NLP tools. Examples of so-called broken rhymes: | *... LIGHT / ... NIGHT-[-gown]*, *Some asleep unawakened, ALL un- / -warned, eleven fathoms FALLen* |
+| `trailing` | **Leading‑Target / Trailing Rhyme**: Where the rhyming part (the target of a rhyme) matches the first syllable of a two-syllable word (or the first word in a pair of monosyllabic words). | *ring/finger*, *scout/doubter* |
+| `apocopated` | **Leading‑Source / Apocopated Rhyme**: Where the rhymed-with part (the source component of a rhyme pair) is the first syllable of a two-syllable word (or the first word in a monosyllabic word pair); the exact reversal of the trailing rhyme. | *finger/ring*, *doubter/scout* |
+| `unstressed` | **Weak-Syllable / Unstressed Rhyme**: Rhymes which fall entirely on matched unstressed syllables, leaving the stressed syllables completely distinct. | *forgiven/hidden*, *prison/heaven*, *very/sorry* |
+| `mosaic` | **Compound / Mosaic Rhyme**: Complex compound rhymes aligning cumulative matching or near-matching of several features: homophonies (matching vowel phones), consonant family-matches (like family rhymes), and scansion (stress patterns) across syllabic sequences, phrases, or entire sub-phrases. | *astronomical/solemn and comical*, *when you say/there you stay/blew away* |
+| `identical` | **Refrain / Identical Rhyme**: Rhyme by exact duplication of the same word. Frequently utilized in forms like Villanelles, Madrigals, or complex refrains. | *I froze, profoundly shaken / indeed, the doll had shaken* |
+
 ### Type Exports
 
 ```typescript
+export type RhymeType =
+  | 'perfect' | 'family' | 'slant' | 'masculine' | 'feminine' | 'dactylic'
+  | 'eye' | 'rich' | 'assonant' | 'consonant' | 'augmented' | 'diminished'
+  | 'syllabic' | 'light' | 'wrenched' | 'grammatical' | 'trailing'
+  | 'apocopated' | 'unstressed' | 'mosaic' | 'identical';
+
+export interface GetRhymesOptions {
+  phones?: string;
+  posPrecision?: number;     // Part-of-Speech precision (0-3)
+  freqThreshold?: number;    // Zipf frequency threshold (e.g. 2.0)
+  syllables?: number;        // Exact syllable count filter
+  poeticFit?: PoeticMeter;   // Poetic foot fit filter (meter)
+  stressPattern?: string;    // Exact stress pattern filter (e.g., '10')
+}
+
 export type PoeticMeter = 'iamb' | 'trochee' | 'spondee' | 'pyrrhic' |
   'dactyl' | 'anapest' | 'amphibrach' | 'bacchic' | 'antibacchic' | 'cretic' |
   'choriamb' | 'antispast' | 'first paeon' | 'second paeon' | 'third paeon' | 'fourth paeon';
@@ -477,6 +563,40 @@ n.rewriteWithRhymes(
 // Example: "april wiles's duh coolest month ceding pontiac's krout what've worthey wehde"
 ```
 
+### Deep & Nuanced Rhyme Search
+
+Use the `src/verse_tscript_rhymer.ts` API to perform complex, multi-layered rhyming queries and word-pair classification:
+
+```javascript
+const rhymer = require('nounsing-pro');
+
+// Retrieve family rhymes (matching vowel + same consonant family)
+const fams = rhymer.getRhymes("wet", "family");
+// ['beck', 'debt', 'get', 'net', 'pet', 'set', 'sweat', ...]
+
+// Retrieve slant rhymes with custom constraints
+const slants = rhymer.getRhymes("prayer", "slant");
+// ['despair', 'cigar', 'air', 'hair', 'wear', ...]
+
+// Advanced filtering: Perfect rhymes for "sing" restricted to Nouns (NN) with Zipf frequency >= 3.0
+const advancedPerfects = rhymer.getRhymes("sing", "perfect", {
+  posPrecision: 3,     // Exact Penn Treebank POS tag (e.g., NN only)
+  freqThreshold: 3.0   // Common words only
+});
+// ['ring', 'spring', 'wing', 'string', ...]
+
+// Metrical filtering: Trochaic slant rhymes for "sinking"
+const trochaicSlants = rhymer.getRhymes("sinking", "slant", {
+  poeticFit: "trochee"
+});
+
+// Classify the rhyme relation between two words
+rhymer.classifyRhyme("night", "light");
+// ['perfect', 'masculine']
+
+rhymer.classifyRhyme("dame", "grain");
+// ['family']
+```
 ### Stress Pattern Rewrite
 
 ```javascript
@@ -717,7 +837,7 @@ The `POS` column uses the Penn Treebank tagset. Here is every tag with its meani
 
 **Weight Pattern** — A string of H (Heavy) and L (Light) indicators for the last three syllables of a word. A weight pattern like `L L H` means the final syllable is heavy while the penult and antepenult are light.
 
-**Zipf Frequency** — A logarithmic scale (1.00–7.00) measuring how common a word is across large text corpora. Higher values = more common words. The values in NOUNSING-PRO come from the SUBTLEX corpus.
+**Zipf Frequency** — A logarithmic scale measuring how common a word is across large text corpora. Higher values = more common words. The values in NOUNSING-PRO represent an average of frequencies from across the SUBTLEX corpus (data derived from movie subtitles, approximating spoken English) alongside several large web text and print-based corpora. For the CMU lexicon, the effective frequency range is from 1.00 (rarest) to 7.00 (most common). To our knowledge, the only >7.00 outliers are single characters. On the other extreme, it's plausible that a handful of <1.00 outlier words are present, but this matter remains uninvestigated on our part. Any suchlike <1.00 frequency outlier would have to be a word appearing no more than once in no more than one of the Zipf source corpora, while altogether absent from every other frequency source corpus. If you happen to locate or spot any word quite so rare, we hereby challenge you to actually use it somewhere!
 
 ---
 
@@ -743,12 +863,16 @@ The `brfs` transform inlines the 31MB `newerCMU.tsv` into the browser bundle dur
 | `src/cli.ts` | Interactive CLI with all menus, prompts, chalk coloring |
 | `src/types.ts` | TypeScript interfaces: WordProfile, WeightMetrics, PhonologyData, etc. |
 | `nounsing.d.ts` | Published type declarations (auto-generated from tsc) |
-| `newerCMU.tsv` | The augmented 54-column TSV dictionary (~31MB, 123K+ entries) |
+| `src/verse_tscript_rhymer.ts` | Nuanced and metrically constrained rhyming engine, supporting dozens of rhyme types |
+| `verse_tscript_rhymer_guide.md` | Technical reference guide for programmatic rhyme types and performance tips |
+| `newerCMU.tsv` | The augmented 54-column TSV dictionary (~31MB, 123K+ entries), with morphological, phonological, prosodic, syntactic, statistical (cross-corpus derived usage frequency score under the `freq` column), and other annotations and classifications |
 | `dist/cjs/` | Compiled CommonJS output (Node.js consumption) |
 | `dist/esm/` | ESM re-export wrapper |
 | `dist/nounsing-browser.js` | Self-contained browser bundle (~38MB with inlined dictionary) |
-| `test/nounsing.test.ts` | 220+ tape test suite |
+| `test/nounsing.test.ts` | 220+ tape test suite for core library |
+| `test/rhymer.test.ts` | 190+ tape test suite for `verse_tscript_rhymer` rhyme classifications |
 | `test/manual.test.ts` | Manual verification script |
+
 
 ### Configuration
 
@@ -765,6 +889,8 @@ NOUNSING-PRO was designed and facilitated by **[Aleksey Calvin Tsukanov](https:/
 
 The core rhyme, stress, and phonetic search functions (`rhymes`, `rhymingPart`, `stresses`, `search`, `searchStresses`), as well as the rhyme-, stress-, and phoneme-based text rewrites (CLI Menu 3, operations B/C/D), are derived from examples and functions in **Pronouncing** ([Python](https://github.com/aparrish/pronouncingpy) and [JavaScript](https://github.com/aparrish/pronouncingjs)) by **[Allison Parrish](https://www.decontextualize.com/)**, with additional adaptation via **Pronouncing TS** ([npm](https://www.npmjs.com/package/pronouncing)) by Aleksey Calvin Tsukanov.
 
-The morphological/phonological deep-analysis functionalities — including the fine-grained augmentation of the CMU dictionary with 50+ additional linguistic data columns — are based on the work of UCLA's **[Claire Moore Cantwell](https://clairemoorecantwell.org/)**, as found in her [English Stress Statistics](https://github.com/clairemoorecantwell/EnglishStressStatistics) and [Annotate the CMU Dictionary](https://github.com/clairemoorecantwell/annotateCMU) repositories, with additional input from the preeminent linguist and phonologist **[Bruce Hayes] (https://brucehayes.org/)** (also at UCLA), and others.
+The morphological/phonological deep-analysis functionalities — including the fine-grained augmentation of the CMU dictionary with 50+ additional linguistic data columns — are based on the work of UCLA's **[Claire Moore Cantwell](https://clairemoorecantwell.org/)**, as found in her [English Stress Statistics](https://github.com/clairemoorecantwell/EnglishStressStatistics) and [Annotate the CMU Dictionary](https://github.com/clairemoorecantwell/annotateCMU) repositories, with additional input from the preeminent linguist and phonologist **[Bruce Hayes](https://brucehayes.org/)** (also at UCLA), and others.
 
-The dictionary is built upon the original **[CMU Pronouncing Dictionary](http://www.speech.cs.cmu.edu/cgi-bin/cmudict)**, a long-standing resource in computational phonology maintained by Carnegie Mellon University, and invoked via the [NLTK toolkit](https://github.com/nltk/nltk).
+The nuanced rhyming engine (`src/verse_tscript_rhymer.ts`) and its 21 programmatic rhyme types (utilized in CLI Submenus 4 and 5) were extrapolated over **[Verse-Python](https://github.com/austinpursley/verse-python)**, a slant-compatible set of rhyme-matching functions by **[Austin Pursley](https://austinpursley.com/)**. Notably, Verse-Python is itself built on top of Parrish's Pronouncing, with its brilliantly simple finder of perfect rhymes.
+
+The dictionary is built upon the original **[CMU Pronouncing Dictionary](http://www.speech.cs.cmu.edu/cgi-bin/cmudict)**, a long-standing resource in computational phonology maintained by Carnegie Mellon University, and invoked for augmentation via the [NLTK toolkit](https://github.com/nltk/nltk).
