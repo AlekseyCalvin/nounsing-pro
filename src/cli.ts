@@ -1,6 +1,41 @@
 import prompts from 'prompts';
 import chalk from 'chalk';
+import readline from 'readline';
 import * as nounsing from './nounsing';
+
+type RhymeType =
+  | 'perfect'
+  | 'family'
+  | 'slant'
+  | 'masculine'
+  | 'feminine'
+  | 'dactylic'
+  | 'eye'
+  | 'rich'
+  | 'assonant'
+  | 'consonant'
+  | 'augmented'
+  | 'diminished'
+  | 'syllabic'
+  | 'light'
+  | 'wrenched'
+  | 'grammatical'
+  | 'trailing'
+  | 'apocopated'
+  | 'unstressed'
+  | 'mosaic'
+  | 'identical';
+
+interface GetRhymesOptions {
+  phones?: string;
+  posPrecision?: number;
+  freqThreshold?: number;
+  syllables?: number;
+  poeticFit?: nounsing.PoeticMeter;
+  stressPattern?: string;
+}
+
+import * as rhymer from './verse_tscript_rhymer';
 
 function sliceResults<T>(results: T[], label: string): T[] {
   const total = results.length;
@@ -84,6 +119,8 @@ async function main() {
         { title: chalk.cyan('1. Analyze a Single Word in Depth'), value: 'analyze' },
         { title: chalk.green('2. Search Dictionary'), value: 'search' },
         { title: chalk.yellow('3. Process a Phrase / Line / Text'), value: 'process' },
+        { title: chalk.magenta('4. Nuanced Rhyming'), value: 'nuancedRhyme' },
+        { title: chalk.blueBright('5. Advanced Rhyming'), value: 'advancedRhyme' },
         { title: chalk.gray('Exit'), value: 'exit' }
       ]
     });
@@ -99,6 +136,10 @@ async function main() {
       await searchDictionary();
     } else if (mainAction === 'process') {
       await processText();
+    } else if (mainAction === 'nuancedRhyme') {
+      await nuancedRhymeFlow();
+    } else if (mainAction === 'advancedRhyme') {
+      await advancedRhymeFlow();
     }
   }
 }
@@ -710,6 +751,245 @@ async function processText() {
       console.log(`Rewritten: ${chalk.magenta(rewritten)}\n`);
     }
   }
+}
+
+// ============================================================================
+// GRID MATRIX SELECTOR AND FLOWS FOR NUANCED & ADVANCED RHYMING
+// ============================================================================
+
+const RHYME_GRID = [
+  ['diminished', 'masculine', 'eye', 'feminine', 'augmented'],
+  ['wrenched', 'consonant', 'slant', 'assonant', 'grammatical'],
+  ['apocopated', 'dactylic', 'perfect', 'syllabic', 'trailing'],
+  ['unstressed', 'rich', 'family', 'light', 'mosaic']
+] as const;
+
+function renderGrid(activeRow: number, activeCol: number): string {
+  let output = '\n';
+  output += chalk.bold.magenta('Select Rhyme Type:') + ' ' + chalk.dim('(Arrows to navigate, Enter to select, Esc to cancel)\n\n');
+  
+  for (let r = 0; r < 4; r++) {
+    let rowStr = '  ';
+    for (let c = 0; c < 5; c++) {
+      const item = RHYME_GRID[r][c];
+      const paddingTotal = 15 - item.length;
+      const padLeft = Math.floor(paddingTotal / 2);
+      const padRight = paddingTotal - padLeft;
+      const spacedItem = ' '.repeat(padLeft) + item + ' '.repeat(padRight);
+      
+      if (r === activeRow && c === activeCol) {
+        rowStr += chalk.bgHex('#6366F1').white.bold(spacedItem);
+      } else {
+        rowStr += chalk.white(spacedItem);
+      }
+      
+      if (c < 4) {
+        rowStr += chalk.dim(' │ ');
+      }
+    }
+    output += rowStr + '\n';
+  }
+  output += '\n';
+  return output;
+}
+
+function selectRhymeTypeMatrix(): Promise<RhymeType | null> {
+  return new Promise((resolve) => {
+    let activeRow = 1;
+    let activeCol = 2; // starts at 'slant'
+    
+    // Write the initial grid
+    process.stdout.write(renderGrid(activeRow, activeCol));
+    
+    const isRaw = process.stdin.isRaw;
+    if (process.stdin.isTTY) {
+      process.stdin.setRawMode(true);
+    }
+    process.stdin.resume();
+    readline.emitKeypressEvents(process.stdin);
+    
+    const keyHandler = (str: string, key: any) => {
+      // Move cursor up 8 lines and clear
+      process.stdout.write('\x1B[8A\x1B[J');
+      
+      if (!key) return;
+      
+      if (key.ctrl && key.name === 'c') {
+        cleanup();
+        process.exit(0);
+      }
+      
+      if (key.name === 'escape' || key.name === 'esc') {
+        cleanup();
+        resolve(null);
+        return;
+      }
+      
+      if (key.name === 'return' || key.name === 'enter') {
+        cleanup();
+        resolve(RHYME_GRID[activeRow][activeCol] as RhymeType);
+        return;
+      }
+      
+      if (key.name === 'up') {
+        activeRow = (activeRow - 1 + 4) % 4;
+      } else if (key.name === 'down') {
+        activeRow = (activeRow + 1) % 4;
+      } else if (key.name === 'left') {
+        activeCol = (activeCol - 1 + 5) % 5;
+      } else if (key.name === 'right') {
+        activeCol = (activeCol + 1) % 5;
+      }
+      
+      // Reprint the grid with new selection
+      process.stdout.write(renderGrid(activeRow, activeCol));
+    };
+    
+    function cleanup() {
+      process.stdin.removeListener('keypress', keyHandler);
+      if (process.stdin.isTTY) {
+        process.stdin.setRawMode(isRaw);
+      }
+      process.stdin.pause();
+    }
+    
+    process.stdin.on('keypress', keyHandler);
+  });
+}
+
+async function nuancedRhymeFlow() {
+  const { word } = await prompts({
+    type: 'text',
+    name: 'word',
+    message: 'Enter target word for nuanced rhyming:'
+  });
+  if (!word || ['exit', 'quit', 'back'].includes(word.trim().toLowerCase())) return;
+
+  const cleanWord = word.trim().toLowerCase().replace(/[^a-z']/g, '');
+  const allPhones = nounsing.phonesForWord(cleanWord);
+  if (allPhones.length === 0) {
+    console.log(chalk.red(`\n"${cleanWord}" not found in dictionary.\n`));
+    return;
+  }
+
+  console.log(chalk.cyan(`Target word: "${cleanWord}" (Phones: ${allPhones[0]})\n`));
+
+  const selectedType = await selectRhymeTypeMatrix();
+  if (!selectedType) {
+    console.log(chalk.yellow('Rhyme search cancelled.\n'));
+    return;
+  }
+
+  const results = rhymer.getRhymes(cleanWord, selectedType);
+
+  if (results.length === 0) {
+    console.log(chalk.yellow(`No ${selectedType} rhymes found for "${cleanWord}".\n`));
+    return;
+  }
+
+  const sliced = await promptSlice(results.length, `${selectedType} rhymes`, results);
+  console.log(chalk.green(`\n${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} rhymes for "${cleanWord}" (showing ${sliced.length}):`));
+  for (let i = 0; i < sliced.length; i += 5) {
+    console.log('  ' + sliced.slice(i, i + 5).join(', '));
+  }
+  console.log('');
+}
+
+async function advancedRhymeFlow() {
+  const { word } = await prompts({
+    type: 'text',
+    name: 'word',
+    message: 'Enter target word for advanced rhyming:'
+  });
+  if (!word || ['exit', 'quit', 'back'].includes(word.trim().toLowerCase())) return;
+
+  const cleanWord = word.trim().toLowerCase().replace(/[^a-z']/g, '');
+  const allPhones = nounsing.phonesForWord(cleanWord);
+  if (allPhones.length === 0) {
+    console.log(chalk.red(`\n"${cleanWord}" not found in dictionary.\n`));
+    return;
+  }
+
+  console.log(chalk.cyan(`Target word: "${cleanWord}" (Phones: ${allPhones[0]})\n`));
+
+  const selectedType = await selectRhymeTypeMatrix();
+  if (!selectedType) {
+    console.log(chalk.yellow('Rhyme search cancelled.\n'));
+    return;
+  }
+
+  // Ask for POS precision
+  const posPrecision = await promptPOSPrecision();
+
+  // Ask for Zipf threshold
+  const freqThreshold = await promptFreqThreshold();
+
+  // Ask for syllable count
+  const { syllables } = await prompts({
+    type: 'number',
+    name: 'syllables',
+    message: 'Exact syllable count filter (0 or empty to disable):',
+    initial: 0,
+    min: 0
+  });
+
+  // Ask for poetic foot fit filter
+  const meterOptions = [
+    { title: 'Iambic (01)', value: 'iamb' },
+    { title: 'Trochee (10)', value: 'trochee' },
+    { title: 'Spondee (11)', value: 'spondee' },
+    { title: 'Pyrrhic (00)', value: 'pyrrhic' },
+    { title: 'Dactyl (100)', value: 'dactyl' },
+    { title: 'Anapest (001)', value: 'anapest' },
+    { title: 'Amphibrach (010)', value: 'amphibrach' },
+    { title: 'Bacchic (011)', value: 'bacchic' },
+    { title: 'Antibacchic (110)', value: 'antibacchic' },
+    { title: 'Cretic (101)', value: 'cretic' },
+    { title: 'Choriambic (1001)', value: 'choriamb' },
+    { title: 'Antispastic (0110)', value: 'antispast' },
+    { title: 'First Paeon (1000)', value: 'first paeon' },
+    { title: 'Second Paeon (0100)', value: 'second paeon' },
+    { title: 'Third Paeon (0010)', value: 'third paeon' },
+    { title: 'Fourth Paeon (0001)', value: 'fourth paeon' },
+    { title: chalk.gray('None'), value: 'none' }
+  ];
+
+  const { poeticFit } = await prompts({
+    type: 'select',
+    name: 'poeticFit',
+    message: 'Poetic foot fit filter (meter):',
+    choices: meterOptions,
+    initial: 16 // None is index 16
+  });
+
+  // Ask for exact stress contour pattern
+  const { stressPattern } = await prompts({
+    type: 'text',
+    name: 'stressPattern',
+    message: 'Exact stress pattern contour filter (e.g. "10", "010", empty to disable):'
+  });
+
+  // Construct options object
+  const options: GetRhymesOptions = {};
+  if (posPrecision > 0) options.posPrecision = posPrecision;
+  if (freqThreshold >= 1.0) options.freqThreshold = freqThreshold;
+  if (syllables > 0) options.syllables = syllables;
+  if (poeticFit && poeticFit !== 'none') options.poeticFit = poeticFit as nounsing.PoeticMeter;
+  if (stressPattern && stressPattern.trim() !== '') options.stressPattern = stressPattern.trim();
+
+  const results = rhymer.getRhymes(cleanWord, selectedType, options);
+
+  if (results.length === 0) {
+    console.log(chalk.yellow(`No ${selectedType} rhymes found for "${cleanWord}" with the selected filters.\n`));
+    return;
+  }
+
+  const sliced = await promptSlice(results.length, `${selectedType} rhymes`, results);
+  console.log(chalk.green(`\n${selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} rhymes for "${cleanWord}" (showing ${sliced.length}):`));
+  for (let i = 0; i < sliced.length; i += 5) {
+    console.log('  ' + sliced.slice(i, i + 5).join(', '));
+  }
+  console.log('');
 }
 
 main().catch(err => {
