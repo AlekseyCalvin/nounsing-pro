@@ -36,7 +36,7 @@ export declare function phonemics(word: string): {
 export declare function stress(word: string): import("./types").StressData[] | null;
 /** 4. Syllabic weight topologies */
 export declare function weights(word: string): {
-    pattern: ("H" | "L")[];
+    pattern: ("L" | "H")[];
     details: WeightMetrics[];
 }[] | null;
 /** 5. Vowels & Nuclei */
@@ -165,4 +165,5 @@ export declare function countTextSyllables(text: string): {
 export declare function rewriteFromFirstTwoPhones(text: string, posPrecision?: number, freqThreshold?: number): string;
 export declare function rewriteWithStressPattern(text: string, posPrecision?: number, freqThreshold?: number): string;
 export declare function rewriteWithRhymes(text: string, posPrecision?: number, freqThreshold?: number): string;
+export { RhymeType, SlantOptions, GetRhymesOptions, SearchOption, SearchDirection, RhymeResult, ALL_RHYME_TYPES, consonantClusters, isConsonantCluster, isVowel, isStressedVowel, isUnstressedVowel, isConsonant, vowelBase, stressOf, unique, allTheSame, shuffleInPlace, randomPhonesForWord, firstPhonesForWord, stressPattern, stressedVowelIndices, lastStressedVowelIndex, penultimateStressedVowelIndex, antepenultimateStressedVowelIndex, rhymingPartFromIndex, onsetBefore, codaAfter, structuralRhymeTypes, isMasculine, isFeminine, isDactylic, perfectRhyme, familyRhyme, slantRhyme, masculineRhyme, feminineRhyme, dactylicRhyme, eyeRhyme, richRhyme, assonantRhyme, consonantRhyme, augmentedRhyme, diminishedRhyme, syllabicRhyme, lightRhyme, wrenchedRhyme, grammaticalRhyme, trailingRhyme, apocopatedRhyme, unstressedRhyme, mosaicRhyme, identicalRhyme, classifyRhyme, getRhymes, randomRhyme, filterByForbiddenRhymingParts, deduplicatePools, assonance, consonance, alliteration, rhymeSameStress, wildcardMixPhonesRegexSearches } from './verse_tscript_rhymer';
 //# sourceMappingURL=nounsing.d.ts.map
