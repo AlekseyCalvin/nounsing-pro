@@ -1,7 +1,7 @@
 {
   "name": "nounsing-pro",
-  "version": "0.0.6",
-  "description": "augmented TypeScript spawn of Pronouncing Py, over a deep morpho-phonological CMU, Penn tags, and more",
+  "version": "0.0.7",
+  "description": "versatile TypeScript NLP toolkit spawned from Pronouncing Py, over a deep morpho-phonological custom-augmented CMU, Penn tags, and more",
   "author": [
     {
       "name": "Aleksey Calvin Tsukanov",
@@ -39,12 +39,12 @@
   "scripts": {
     "start": "node dist/cjs/cli.js",
     "build": "npm run build:cjs && npm run build:esm && npm run build:browser && npm run copy:dts",
-    "build:cjs": "tsc && node -e \"require('fs').copyFileSync('newerCMU.tsv', 'dist/cjs/newerCMU.tsv')\"",
+    "build:cjs": "tsc && node -e \"require('fs').copyFileSync('newerCMU.tsv', 'dist/cjs/newerCMU.tsv'); require('fs').mkdirSync('dist/src', {recursive: true}); require('fs').copyFileSync('newerCMU.tsv', 'dist/src/newerCMU.tsv')\"",
     "build:esm": "node -e \"require('fs').mkdirSync('dist/esm',{recursive:true}); require('fs').writeFileSync('dist/esm/nounsing.mjs', 'export * from \\\"../cjs/nounsing.js\\\";\\n');\"",
     "build:browser": "browserify -t brfs dist/cjs/nounsing.js --standalone nounsing > dist/nounsing-browser.js",
     "build:test": "tsc -p tsconfig.test.json && node -e \"require('fs').copyFileSync('newerCMU.tsv', 'dist-test/src/newerCMU.tsv')\"",
     "copy:dts": "node -e \"require('fs').copyFileSync('dist/cjs/nounsing.d.ts', 'nounsing.d.ts')\"",
-    "test": "npm run build:test && node dist-test/test/nounsing.test.js && node dist-test/test/manual.test.js",
+    "test": "npm run build:test && node dist-test/test/nounsing.test.js && node dist-test/test/rhymer.test.js && node dist-test/test/manual.test.js",
     "prepublishOnly": "npm run build && npm test"
   },
   "devDependencies": {
