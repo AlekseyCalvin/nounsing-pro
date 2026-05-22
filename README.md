@@ -1,7 +1,12 @@
 # NOUNSING-PRO
 #### Morpho-Phonological Toolkit for Poetics, Linguistics, & Prosodic Analysis
 
-**CRUCIAL SETUP INFO**: <br>
+**EASY INSTALL VIA NPM**: <br>
+```
+npm i nounsing-pro
+```
+---
+**ALTERNATIVE SETUP INFO (Github Installation)**: <br>
 1. Clone this repo. <br>
   2. Download the TSV of our augmented CMU Dictionary (*33.2MB*, just over GutHub's *25MB* size limit) from [https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv](https://huggingface.co/datasets/AlekseyCalvin/CMU_Augmented/blob/main/newerCMU.tsv) <br>
   3. Place it into the cloned root folder. <br>
